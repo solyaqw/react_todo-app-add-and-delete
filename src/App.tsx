@@ -1,6 +1,8 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable jsx-a11y/control-has-associated-label */
 import React, { useEffect, useState } from 'react';
+import classNames from 'classnames';
+
 import { UserWarning } from './UserWarning';
 import { createTodo, deleteTodo, getTodos, USER_ID } from './api/todos';
 import { Todo } from './types/Todo';
@@ -142,10 +144,6 @@ export const App: React.FC = () => {
     return <UserWarning />;
   }
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   const shouldShowMain = todos.length > 0;
 
   return (
@@ -161,7 +159,13 @@ export const App: React.FC = () => {
           allCompleted={todos.length > 0 && todos.every(todo => todo.completed)}
         />
 
-        {shouldShowMain && (
+        {loading && (
+          <div className="has-text-centered p-4" data-cy="Loading">
+            Loading...
+          </div>
+        )}
+
+        {!loading && shouldShowMain && (
           <TodoList
             todos={filteredTodos}
             deletingTodos={deletingTodos}
@@ -169,7 +173,7 @@ export const App: React.FC = () => {
           />
         )}
 
-        {tempTodo && (
+        {!loading && tempTodo && (
           <TodoList
             todos={[tempTodo]}
             deletingTodos={[0]}
@@ -178,7 +182,7 @@ export const App: React.FC = () => {
           />
         )}
 
-        {shouldShowMain && (
+        {!loading && shouldShowMain && (
           <Footer
             todos={todos}
             filter={filter}
@@ -190,7 +194,13 @@ export const App: React.FC = () => {
 
       <div
         data-cy="ErrorNotification"
-        className={`notification is-danger is-light has-text-weight-normal ${!error ? 'hidden' : ''}`}
+        className={classNames(
+          'notification',
+          'is-danger',
+          'is-light',
+          'has-text-weight-normal',
+          { hidden: !error },
+        )}
       >
         <button
           data-cy="HideErrorButton"

@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import { Todo } from '../types/Todo';
 import { StatusFilter } from '../types/StatusFilter';
 
@@ -8,6 +9,27 @@ type Props = {
   setFilter: (filter: StatusFilter) => void;
   handleClearCompleted: () => void;
 };
+
+const FILTERS = [
+  {
+    label: 'All',
+    value: StatusFilter.All,
+    dataCy: 'FilterLinkAll',
+    href: '#/',
+  },
+  {
+    label: 'Active',
+    value: StatusFilter.Active,
+    dataCy: 'FilterLinkActive',
+    href: '#/active',
+  },
+  {
+    label: 'Completed',
+    value: StatusFilter.Completed,
+    dataCy: 'FilterLinkCompleted',
+    href: '#/completed',
+  },
+];
 
 export const Footer: React.FC<Props> = ({
   todos,
@@ -25,47 +47,19 @@ export const Footer: React.FC<Props> = ({
       </span>
 
       <nav className="filter" data-cy="Filter">
-        <a
-          href="#/"
-          className={`filter__link ${
-            filter === StatusFilter.All ? 'selected' : ''
-          }`}
-          data-cy="FilterLinkAll"
-          onClick={e => {
-            e.preventDefault();
-            setFilter(StatusFilter.All);
-          }}
-        >
-          All
-        </a>
-
-        <a
-          href="#/active"
-          className={`filter__link ${
-            filter === StatusFilter.Active ? 'selected' : ''
-          }`}
-          data-cy="FilterLinkActive"
-          onClick={e => {
-            e.preventDefault();
-            setFilter(StatusFilter.Active);
-          }}
-        >
-          Active
-        </a>
-
-        <a
-          href="#/completed"
-          className={`filter__link ${
-            filter === StatusFilter.Completed ? 'selected' : ''
-          }`}
-          data-cy="FilterLinkCompleted"
-          onClick={e => {
-            e.preventDefault();
-            setFilter(StatusFilter.Completed);
-          }}
-        >
-          Completed
-        </a>
+        {FILTERS.map(({ label, value, dataCy, href }) => (
+          <a
+            key={value}
+            href={href}
+            className={classNames('filter__link', {
+              selected: filter === value,
+            })}
+            data-cy={dataCy}
+            onClick={() => setFilter(value)}
+          >
+            {label}
+          </a>
+        ))}
       </nav>
 
       <button

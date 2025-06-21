@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import { Todo } from '../types/Todo';
 
 type Props = {
@@ -15,49 +16,54 @@ export const TodoList: React.FC<Props> = ({
   isTemp = false,
 }) => (
   <section className="todoapp__main" data-cy="TodoList">
-    {todos.map(todo => (
-      <div
-        key={todo.id}
-        data-cy="Todo"
-        className={`todo ${todo.completed ? 'completed' : ''} ${
-          deletingTodos.includes(todo.id) ? 'deleting' : ''
-        }`}
-      >
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-        <label className="todo__status-label">
-          <input
-            data-cy="TodoStatus"
-            type="checkbox"
-            className="todo__status"
-            checked={todo.completed}
-            readOnly
-          />
-        </label>
+    {todos.map(todo => {
+      const isDeleting = deletingTodos.includes(todo.id);
 
-        <span data-cy="TodoTitle" className="todo__title">
-          {todo.title}
-        </span>
-
-        <button
-          type="button"
-          className="todo__remove"
-          data-cy="TodoDelete"
-          onClick={() => onDelete(todo.id)}
-          disabled={isTemp}
-        >
-          ×
-        </button>
-
+      return (
         <div
-          data-cy="TodoLoader"
-          className={`modal overlay ${
-            deletingTodos.includes(todo.id) ? 'is-active' : ''
-          }`}
+          key={todo.id}
+          data-cy="Todo"
+          className={classNames('todo', {
+            completed: todo.completed,
+            deleting: isDeleting,
+          })}
         >
-          <div className="modal-background has-background-white-ter" />
-          <div className="loader" />
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+          <label className="todo__status-label">
+            <input
+              data-cy="TodoStatus"
+              type="checkbox"
+              className="todo__status"
+              checked={todo.completed}
+              readOnly
+            />
+          </label>
+
+          <span data-cy="TodoTitle" className="todo__title">
+            {todo.title}
+          </span>
+
+          <button
+            type="button"
+            className="todo__remove"
+            data-cy="TodoDelete"
+            onClick={() => onDelete(todo.id)}
+            disabled={isTemp}
+          >
+            ×
+          </button>
+
+          <div
+            data-cy="TodoLoader"
+            className={classNames('modal overlay', {
+              'is-active': isDeleting,
+            })}
+          >
+            <div className="modal-background has-background-white-ter" />
+            <div className="loader" />
+          </div>
         </div>
-      </div>
-    ))}
+      );
+    })}
   </section>
 );
